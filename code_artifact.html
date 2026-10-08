@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تدريب درس الفراق بين الزوجين - التربية الإسلامية - الصف الثاني عشر</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome CDN for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter & Tajawal -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #f8fafc;
+        }
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            .print-only {
+                display: block !important;
+            }
+            body {
+                background: white;
+                color: black;
+            }
+            .card-box {
+                border: 1px solid #ccc !important;
+                box-shadow: none !important;
+                break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col justify-between">
+
+    <!-- Header -->
+    <header class="bg-emerald-700 text-white shadow-lg no-print">
+        <div class="max-w-5xl mx-auto px-4 py-6 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="text-center md:text-right">
+                <span class="bg-emerald-600 text-emerald-100 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">مادة التربية الإسلامية - الصف الثاني عشر</span>
+                <h1 class="text-2xl md:text-3xl font-bold mt-1">تدريب تفاعلي: درس الفراق بين الزوجين</h1>
+                <p class="text-emerald-100 text-sm mt-1">أحكام الطلاق، الخلع، والفسخ، والعدة وآثارها الشرعية</p>
+            </div>
+            <div class="flex gap-2">
+                <button onclick="window.print()" class="bg-emerald-800 hover:bg-emerald-900 text-white px-4 py-2 rounded-lg font-medium shadow transition flex items-center gap-2 text-sm">
+                    <i class="fa-solid fa-print"></i> طباعة / حفظ PDF
+                </button>
+                <button onclick="resetQuiz()" class="bg-white/10 hover:bg-white/20 text-white px-3 py-2 rounded-lg font-medium transition text-sm">
+                    <i class="fa-solid fa-rotate-right"></i> إعطاء إعادة
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-5xl mx-auto px-4 py-8 w-full flex-grow">
+        
+        <!-- Student Info Card -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-8 card-box">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 mb-1">اسم الطالب/ـة:</label>
+                    <input type="text" id="studentName" placeholder="اكتب اسمك الكامل..." class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 mb-1">الصف / الشعبة:</label>
+                    <input type="text" id="studentClass" placeholder="مثال: 12 / عام 1" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 mb-1">التاريخ:</label>
+                    <input type="text" id="quizDate" class="w-full bg-slate-100 border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-600" readonly>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quiz Control Bar -->
+        <div class="flex justify-between items-center mb-6 no-print">
+            <div class="text-slate-600 text-sm font-medium">
+                عدد الأسئلة: <span class="font-bold text-emerald-700">15 سؤالاً</span>
+            </div>
+            <div id="scoreBadge" class="hidden bg-emerald-100 border border-emerald-300 text-emerald-800 px-4 py-1.5 rounded-full font-bold text-sm">
+                النتيجة: <span id="userScore">0</span> / 15
+            </div>
+        </div>
+
+        <!-- Questions Container -->
+        <form id="quizForm" onsubmit="submitQuiz(event)" class="space-y-6">
+            <div id="questionsList" class="space-y-6">
+                <!-- Questions injected dynamically by JS -->
+            </div>
+
+            <div class="no-print pt-4 flex flex-col items-center gap-4">
+                <button type="submit" id="submitBtn" class="w-full md:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-lg px-10 py-3.5 rounded-xl shadow-lg hover:shadow-xl transition transform hover:-translate-y-0.5">
+                    <i class="fa-solid fa-paper-plane ml-2"></i> تسليم ومراجعة الإجابات
+                </button>
+            </div>
+        </form>
+
+        <!-- Result Card (Hidden until submit) -->
+        <div id="resultBox" class="hidden mt-8 bg-white rounded-2xl border-2 border-emerald-500 p-8 text-center shadow-xl">
+            <div class="inline-flex items-center justify-center w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full text-4xl mb-4">
+                <i class="fa-solid fa-award"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-slate-800">تم إكمال التدريب بنجاح!</h2>
+            <p class="text-slate-600 mt-1">النتيجة النهائية التي حصلت عليها هي:</p>
+            <div class="text-5xl font-extrabold text-emerald-600 my-4" id="finalResultText">0 / 15</div>
+            <p id="feedbackMessage" class="text-sm font-medium text-slate-700 max-w-md mx-auto mb-6"></p>
+            
+            <div class="flex justify-center gap-4 no-print">
+                <button onclick="window.print()" class="bg-emerald-700 hover:bg-emerald-800 text-white px-6 py-2.5 rounded-xl font-bold transition flex items-center gap-2">
+                    <i class="fa-solid fa-file-pdf"></i> طباعة التقرير / PDF
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-slate-800 text-slate-400 py-6 text-center text-xs border-t border-slate-700 mt-12 no-print">
+        <p>مادة التربية الإسلامية - الصف الثاني عشر | تدريب تفاعلي مخصص للطباعة والتعلم الإلكتروني</p>
+    </footer>
+
+    <script>
+        // Set today's date
+        document.getElementById('quizDate').value = new Date().toLocaleDateString('ar-AE', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+
+        // Question Bank
+        const questions = [
+            {
+                id: 1,
+                question: "ما التعريف الشرعي الصحيح للطلاق؟",
+                options: [
+                    "حل عقد الزوجية في الحال أو المآل بلفظ مخصوص أو ما يقوم مقامه",
+                    "إنهاء عقد الزوجية بطلب من الزوجة مقابل عوض تدفعه للزوج",
+                    "فسخ العقد عن طريق القاضي لعدم توفر أركان النكاح",
+                    "اتفاق الطرفين على تأجيل الحياة الزوجية لفترة محددة"
+                ],
+                correct: 0,
+                explanation: "الطلاق هو حل عقد الزوجية في الحال (كالطلاق البائن) أو المآل (كالطلاق الرجعي) بلفظ صريح أو كناية."
+            },
+            {
+                id: 2,
+                question: "ما الحكم الشرعي للخلع إذا دعت إليه حاجة شرعية كأن كرهت الزوجة زوجها وخافت ألا تقيم حدود الله؟",
+                options: [
+                    "مباح مشروع",
+                    "محرم قطعا",
+                    "مكروه تحريما",
+                    "واجب على الزوج قبول القيمة"
+                ],
+                correct: 0,
+                explanation: "الخلع مباح ومشروع عند وجود الحاجة مثل خوف عدم إقامة حدود الله تعالى، استناداً لحديث امرأة ثابت بن قيس."
+            },
+            {
+                id: 3,
+                question: "ما الفرق الأساسي بين 'فسخ النكاح' و'الطلاق'؟",
+                options: [
+                    "الفسخ يُنقص عدد الطلقات التي يملكها الزوج، بينما الطلاق لا ينقصها",
+                    "الفسخ يكون بسبب طارئ أو عيب يمنع استمرار العقد ولا يُنقص عدد الطلقات، أما الطلاق فيُنقصها",
+                    "لا يوجد أي فرق بين الفسخ والطلاق في الأحكام",
+                    "الفسخ لا يتم إلا برضا الزوج فقط دون الحاجة للقاضي"
+                ],
+                correct: 1,
+                explanation: "الفسخ هو نقض للعقد بسبب وجود عيب أو سبب طارئ (مثل عدم الإنفاق أو الغيبة) ولا ينقص من عدد الطلقات الثلاث."
+            },
+            {
+                id: 4,
+                question: "توفيت امرأة مطلقة طلاقاً رجعياً وهي في مدة العدة، ما حكم الإرث بينهما؟",
+                options: [
+                    "يرثها زوجها لأن العلاقة الزوجية قائمة حكماً في الطلاق الرجعي",
+                    "لا يرثها لأن الطلاق ينتهي بمجرد التلفظ به",
+                    "تنتقل التركة إلى القاضي الشرعي",
+                    "يرث منها فقط مقدار المهر المسمى"
+                ],
+                correct: 0,
+                explanation: "المطلقة رجعياً تُعدّ زوجة حكماً طوال فترة العدة، فيثبت بينهما التوارث إذا مات أحدهما أثناء العدة."
+            },
+            {
+                id: 5,
+                question: "تسمى العدة للمرأة الحامل المتوفى عنها زوجها حتى:",
+                options: [
+                    "تستكمل أربعة أشهر وعشراً",
+                    "تضع حملها",
+                    "تستكمل ثلاثة أطهار",
+                    "تنتظر سنة كاملة"
+                ],
+                correct: 1,
+                explanation: "عدة الحامل مطلقاً (سواء كانت مطلقة أو متوفى عنها زوجها) تنتهي بوضع الحمل لقوله تعالى: ﴿وَأُولَاتُ الْأَحْمَالِ أَجَلُهُنَّ أَن يَضَعْنَ حَمْلَهُنَّ﴾."
+            },
+            {
+                id: 6,
+                question: "طلق رجل زوجته للمرة الأولى، ثم انتهت عدتها دون أن يراجعها. ما نوع هذا الطلاق وما حكم إرجاعها؟",
+                options: [
+                    "طلاق رجعي، يراجعها بالقول دون عقد جديد",
+                    "طلاق بائن بينونة صغرى، يرجعها بعقد ومهر جديدين وبرضاها",
+                    "طلاق بائن بينونة الكبرى، لا تحل له إلا بعد أن تنكح زوجاً غيره",
+                    "فسخ نكاح تلقائي"
+                ],
+                correct: 1,
+                explanation: "إذا انقضت عدة المطلقة طلاقاً رجعياً يتحول الطلاق إلى بائن بينونة صغرى، فيحق له إعادة العقد عليها بعقد ومهر جديدين ورضاها."
+            },
+            {
+                id: 7,
+                question: "ما الحكم الشرعي للطلاق البدعي (كالطلاق أثناء حيض الزوجة أو في طهر جامعها فيه)؟",
+                options: [
+                    "حرام مع إثم الفاعل، ويثبت وقوع الطلاق عند جمهور العلماء",
+                    "مستحب لتعجيل الفراق",
+                    "باطل ولا يقع مطلقاً باتفاق كل الفقهاء",
+                    "مباح لا إثم فيه"
+                ],
+                correct: 0,
+                explanation: "الطلاق البدعي يحرم على الزوج فعله لما فيه من إضرار بالمرأة وتعدٍّ على حدود الله، ولكنه يقع ويحسب عند جمهور الفقهاء."
+            },
+            {
+                id: 8,
+                question: "عدة المرأة غير الحامل التي توفي عنها زوجها هي:",
+                options: [
+                    "ثلاثة أشهر قمرية",
+                    "ثلاثة أطهار",
+                    "أربعة أشهر وعشرة أيام",
+                    "شهر واحد فقط"
+                ],
+                correct: 2,
+                explanation: "قال تعالى: ﴿وَالَّذِينَ يُتَوَفَّوْنَ مِنكُمْ وَيَذَرُونَ أَزْوَاجًا يَتَرَبَّصْنَ بِأَنفُسِهِنَّ أَرْبَعَةَ أَشْهُرٍ وَعَشْرًا﴾."
+            },
+            {
+                id: 9,
+                question: "ما الحكم لو طلبت المرأة الخلع من زوجها من غير ما بأس أو سبب شرعي؟",
+                options: [
+                    "حرام ومكره شرعاً (ورد فيه وعيد شديد)",
+                    "جائز ومستحب",
+                    "واجب قبول القاضي له فوراً",
+                    "مباح شريطة دفع ضعفي المهر"
+                ],
+                correct: 0,
+                explanation: "قال النبي ﷺ: 'أيُّما امرأةٍ سألت زوجَها طلاقاً من غير ما بأسٍ فحرامٌ عليها رائحةُ الجنة'."
+            },
+            {
+                id: 10,
+                question: "أي من الحالات التالية يعتبر طلاقاً بائناً بينونة كبرى؟",
+                options: [
+                    "الطلاق للمرة الأولى أثناء العدة",
+                    "الطلاق بعد المكمل للطلقات الثلاث",
+                    "الخلع بموافقة الزوجين",
+                    "الطلاق قبل الدخول بالزوجة"
+                ],
+                correct: 1,
+                explanation: "الطلاق الثلاث المتفرق المكمل للثلاث يعتبر طلاقاً بائناً بينونة كبرى، ولا تحل له حتى تنكح زوجاً غيره نكاح رغبة لا تحليل."
+            },
+            {
+                id: 11,
+                question: "ما الحكمة الأساسية من تشريع 'العدة' للمرأة بعد الفراق؟",
+                options: [
+                    "التأكد من براءة الرحم وإعطاء فرصة للمراجعة ورعاية حق الزوج المتوفى",
+                    "عقاب المرأة على حصول الفراق",
+                    "منع المرأة من الخروج من بيتها مدى الحياة",
+                    "زيادة التكاليف المالية على الزوج"
+                ],
+                correct: 0,
+                explanation: "تتعدد حكم العدة بين استبراء الرحم لمنع اختلاط الأنساب، وفسحة لإعادة التفكير في الرجعة، وإظهار الوفاء للمتوفى."
+            },
+            {
+                id: 12,
+                question: "تستحق المطلقة طلاقاً رجعياً خلال فترة عدتها:",
+                options: [
+                    "النفقة والسكنى وجوباً على الزوج",
+                    "السكنى فقط دون النفقة",
+                    "لا تستحق نفقة ولا سكنى",
+                    "المهر المكتوب فقط"
+                ],
+                correct: 0,
+                explanation: "الزوجة المطلقة رجعياً لها حق النفقة والسكنى على زوجها طوال فترة العدة لأنها ما زالت زوجة حكماً."
+            },
+            {
+                id: 13,
+                question: "ما حكم إخراج المطلقة طلاقاً رجعياً من بيت الزوجية أثناء فترة العدة؟",
+                options: [
+                    "لا يجوز إخراجها ولا يجوز لها الخروج إلا لضرورة شرعية",
+                    "يجب إخراجها فور صدور لفظ الطلاق",
+                    "مستحب إرسالها لبيت أهلها فوراً",
+                    "يرجع الخيار للأقارب"
+                ],
+                correct: 0,
+                explanation: "قال تعالى: ﴿لَا تُخْرِجُوهُنَّ مِن بُيُوتِهِنَّ وَلَا يَخْرُجْنَ إِلَّا أَن يَأْتِينَ بِفَاحِشَةٍ مُّبَيِّنَةٍ﴾ لعل الله يحدث بعد ذلك أمراً بالرجعة."
+            },
+            {
+                id: 14,
+                question: "ما معنى الإحداد في العدة للمتوفى عنها زوجها؟",
+                options: [
+                    "ترك الزينة والطيب والحلي وما يدعو إلى نكاحها فترة العدة وفاءً للزوج",
+                    "الصيام طوال أيام العدة",
+                    "عدم الحديث مع أفراد أسرتها",
+                    "لبس اللون الأسود حصراً فرضاً شرعياً"
+                ],
+                correct: 0,
+                explanation: "الإحداد هو الامتناع عن الزينة والطيب والجمال والحديث المباشر للخُطّاب، تعبيراً عن الوفاء للزوج المتوفى."
+            },
+            {
+                id: 15,
+                question: "من أسباب فسخ العقد بحكم القاضي الشرعي:",
+                options: [
+                    "وجود عيب مستحكم في أحد الزوجين يمنع الاستمتاع أو الشقاق الشديد وتعذر النفقة",
+                    "سفر الزوج لمدة أسبوع للعمل",
+                    "اختلاف الزوجين في وجهات النظر البسيطة",
+                    "رغبة الزوجة في استكمال دراستها"
+                ],
+                correct: 0,
+                explanation: "يحق للقاضي الفسخ لرفع الضرر كوجود عيوب منفرة أو إفلاس وعجز عن النفقة الأساسية أو الغيبة الطويلة الضارة."
+            }
+        ];
+
+        function renderQuestions() {
+            const container = document.getElementById('questionsList');
+            container.innerHTML = questions.map((q, index) => `
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 card-box" id="q-card-${q.id}">
+                    <div class="flex items-start justify-between gap-4 mb-4">
+                        <h3 class="text-base md:text-lg font-bold text-slate-800 flex items-center gap-2">
+                            <span class="inline-flex items-center justify-center w-7 h-7 bg-emerald-100 text-emerald-800 text-sm font-extrabold rounded-lg">${index + 1}</span>
+                            ${q.question}
+                        </h3>
+                    </div>
+                    <div class="space-y-2.5 mr-2">
+                        ${q.options.map((opt, i) => `
+                            <label class="flex items-center p-3 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer transition text-sm">
+                                <input type="radio" name="q${q.id}" value="${i}" class="w-4 h-4 text-emerald-600 focus:ring-emerald-500 border-slate-300">
+                                <span class="mr-3 text-slate-700 font-medium">${opt}</span>
+                            </label>
+                        `).join('')}
+                    </div>
+                    <div id="explanation-${q.id}" class="hidden mt-4 p-4 rounded-xl text-xs md:text-sm"></div>
+                </div>
+            `).join('');
+        }
+
+        function submitQuiz(e) {
+            e.preventDefault();
+            let score = 0;
+
+            questions.forEach(q => {
+                const selected = document.querySelector(`input[name="q${q.id}"]:checked`);
+                const card = document.getElementById(`q-card-${q.id}`);
+                const exp = document.getElementById(`explanation-${q.id}`);
+
+                exp.classList.remove('hidden');
+
+                if (selected) {
+                    const userVal = parseInt(selected.value);
+                    if (userVal === q.correct) {
+                        score++;
+                        card.classList.add('border-green-400', 'bg-green-50/20');
+                        exp.className = 'mt-4 p-3 bg-green-100 text-green-800 rounded-xl text-xs md:text-sm font-medium border border-green-200';
+                        exp.innerHTML = `<i class="fa-solid fa-circle-check text-green-600 ml-1"></i> <strong>إجابة صحيحة!</strong> ${q.explanation}`;
+                    } else {
+                        card.classList.add('border-red-300', 'bg-red-50/20');
+                        exp.className = 'mt-4 p-3 bg-red-100 text-red-800 rounded-xl text-xs md:text-sm font-medium border border-red-200';
+                        exp.innerHTML = `<i class="fa-solid fa-circle-xmark text-red-600 ml-1"></i> <strong>إجابة خاطئة.</strong> الإجابة الصحيحة هي: "${q.options[q.correct]}". <br><span class="text-slate-600 text-xs mt-1 block">${q.explanation}</span>`;
+                    }
+                } else {
+                    card.classList.add('border-amber-300', 'bg-amber-50/20');
+                    exp.className = 'mt-4 p-3 bg-amber-100 text-amber-800 rounded-xl text-xs md:text-sm font-medium border border-amber-200';
+                    exp.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-amber-600 ml-1"></i> <strong>لم تقم بالإجابة.</strong> الإجابة الصحيحة هي: "${q.options[q.correct]}". <br><span class="text-slate-600 text-xs mt-1 block">${q.explanation}</span>`;
+                }
+            });
+
+            // Update UI Score
+            document.getElementById('scoreBadge').classList.remove('hidden');
+            document.getElementById('userScore').innerText = score;
+            document.getElementById('resultBox').classList.remove('hidden');
+            document.getElementById('finalResultText').innerText = `${score} / ${questions.length}`;
+
+            // Feedback
+            const feedback = document.getElementById('feedbackMessage');
+            if (score === 15) {
+                feedback.innerText = "ممتاز جداً! أداء خيالي واستيعاب كامل لأحكام الفراق والعدة في الفقه الإسلامي.";
+            } else if (score >= 11) {
+                feedback.innerText = "جيد جداً! لديك فهم عميق لمفاهيم الدرس، يمكنك مراجعة الأسئلة الخاطئة لتثبيت المعلومة.";
+            } else {
+                feedback.innerText = "تحتاج إلى إعادة قراءة درس الفراق بين الزوجين والتركيز على الفروق بين الطلاق والخلع والفسخ والأنواع المختلفة للعدة.";
+            }
+
+            // Scroll smoothly to results
+            document.getElementById('resultBox').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function resetQuiz() {
+            document.getElementById('quizForm').reset();
+            document.getElementById('scoreBadge').classList.add('hidden');
+            document.getElementById('resultBox').classList.add('hidden');
+            
+            questions.forEach(q => {
+                const card = document.getElementById(`q-card-${q.id}`);
+                const exp = document.getElementById(`explanation-${q.id}`);
+                card.className = 'bg-white rounded-2xl shadow-sm border border-slate-200 p-6 card-box';
+                exp.className = 'hidden mt-4 p-4 rounded-xl text-xs md:text-sm';
+                exp.innerHTML = '';
+            });
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Initialize quiz on page load
+        window.onload = renderQuestions;
+    </script>
+</body>
+</html>
